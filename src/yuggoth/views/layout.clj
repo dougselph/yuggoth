@@ -131,7 +131,7 @@
         [:body
          [:div {:class "navbar offset1 span12"}
           [:div {:class "navbar-inner"}
-           [:a {:class "brand" :href "/admin"} site-title]
+           [:a {:class "brand" :href "/"} site-title]
            [:ul {:class "nav"}
             [:li [:a {:href "/admin/posts"} "Posts"]]
             [:li [:a {:href "/admin/pages"} "Pages"]]
