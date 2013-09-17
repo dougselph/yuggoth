@@ -299,7 +299,6 @@
 
 (defn admin-save-tag
   [tagid name slug]
-  (prn (str "TagID is: " tagid))
   (if (= tagid "new")
     (db/add-tag name slug)
     (db/update-tag tagid name slug))
