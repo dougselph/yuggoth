@@ -4,6 +4,7 @@
         yuggoth.routes.blog
         yuggoth.routes.page
         yuggoth.routes.admin
+        yuggoth.routes.cssjs
         yuggoth.routes.comments
         yuggoth.routes.upload
         yuggoth.routes.profile
@@ -71,6 +72,7 @@
             blog-routes
             page-routes
             admin-routes
+            cssjs-routes
             app-routes] 
            :middleware [wrap-exceptions
                         wrap-ssl-if-selected]
