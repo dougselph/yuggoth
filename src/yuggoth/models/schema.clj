@@ -62,6 +62,16 @@
     [:pass   "varchar(100)"]
     [:email  "varchar(50)"]))
 
+;cssjs_asset table
+(defn create-cssjs-asset-table []
+  (sql/create-table
+   :cssjs_asset
+   [:id "SERIAL"]
+   [:name "varchar(75)"]
+   [:path "varchar(150)"]
+   [:asset_type "varchar(15)"]
+   [:ins_order :int]))
+
 (defn drop-table
   "drops the supplied table from the DB, table name must be a keyword
 eg: (drop-table :users)"
@@ -79,11 +89,13 @@ eg: (drop-table :users)"
     (drop-table :file)
     (drop-table :tag)
     (drop-table :tag_map)
+    (drop-table :cssjs_asset)
     (sql/transaction
       (create-admin-table)
       (create-blog-table)
       (create-comments-table)
       (create-file-table)
       (create-tag-table)
-      (create-tag-map-table))    
+      (create-tag-map-table)
+      (create-cssjs-asset-table))    
     nil))

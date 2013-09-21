@@ -219,3 +219,24 @@
         (doseq [tag blog-tags]
           (if-not (some #{tag} current-tags) (add-tag tag t-con))
           (tag-post id tag t-con)))))
+
+
+;;cssjs_asset
+(defn cssjs-assets []
+  (sql/query @db ["select * from cssjs_asset"]))
+
+(defn cssjs-asset [assetid]
+  (first (sql/query @db ["select * from cssjs_asset where id = ?" assetid])))
+
+(defn update-cssjs-asset [assetid name path asset_type ins_order]
+  (sql/update! @db :cssjs_asset
+               {:name name :path path :asset_type asset_type :ins_order ins_order}
+               ["id = ?" (Integer/parseInt assetid)]))
+
+(defn add-cssjs-asset [name path asset_type ins_order]
+  (sql/insert! @db 
+    :cssjs_asset {:name name :path path :asset_type asset_type :ins_order ins_order}))
+
+(defn delete-cssjs-asset [assetid]
+  (let [int_assetid (Integer/parseInt assetid)]
+    (sql/delete! @db :cssjs_asset (where {:id int_assetid}))))
