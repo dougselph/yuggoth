@@ -136,6 +136,7 @@
             [:li [:a {:href "/admin/posts"} "Posts"]]
             [:li [:a {:href "/admin/pages"} "Pages"]]
             [:li [:a {:href "/admin/tags"} "Tags"]]
+            [:li [:a {:href "/admin/cssjs"} "CSS/JS"]]
             [:li [:a {:href "/admin/comments"} "Comments"]]
             [:li [:a {:href "/admin/cache/clear"} "Clear Cache"]]]]]
          [:div {:id "header"}]
