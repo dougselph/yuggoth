@@ -108,6 +108,18 @@
     :edit-tag "Edit Tag"
     :blog-settings "Blog Settings"
     :admin-user-name "Admin User Name"
+
+    :asset-header "CSS/js Assets"
+    :css-asset-header "CSS Assets"
+    :js-asset-header "js Assets"
+    :new-css-asset "Create CSS Asset"
+    :new-js-asset "Create js Asset"
+    :edit-css-asset "Edit CSS Asset"
+    :edit-js-asset "Edit js Asset"
+    :new-menu-item "Create Menu Link"
+    :edit-menu-item "Edit Menu Link"
+    :order-header "Insertion Order"
+    :path "Path"
     }
    :es 
    {:about-title "Acerca de"
@@ -216,5 +228,17 @@
     :edit-tag "Editar Tag"
     :blog-settings "Configuración del Blog"
     :admin-user-name "Nombre del Usuario Administrador"
+
+    :asset-header "CSS/js Assets"
+    :css-asset-header "CSS Assets"
+    :js-asset-header "js Assets"
+    :new-css-asset "Create CSS Asset"
+    :new-js-asset "Create js Asset"
+    :edit-css-asset "Edit CSS Asset"
+    :edit-js-asset "Edit js Asset"
+    :new-menu-item "Create Menu Link"
+    :edit-menu-item "Edit Menu Link"
+    :order-header "Insertion Order"
+    :path "Path"
     }})
 
