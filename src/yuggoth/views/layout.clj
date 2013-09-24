@@ -127,7 +127,16 @@
          (include-css "/bootstrap/css/bootstrap.min.css")
          (include-css "/bootstrap/css/bootstrap-responsive.min.css")
          (include-js "/js/jquery.min.js")
-         (include-js  "/bootstrap/js/bootstrap.js")]
+         (include-js  "/bootstrap/js/bootstrap.js")
+         (include-js "/js/site.js")
+         (include-js "/js/shCore.js"
+                   "/js/brushes/shBrushClojure.js"
+                   "/js/brushes/shBrushBash.js"
+                   "/js/brushes/shBrushCss.js"
+                   "/js/brushes/shBrushJava.js"
+                   "/js/brushes/shBrushJScript.js"
+                   "/js/brushes/shBrushPlain.js"
+                   "/js/brushes/shBrushXml.js")]
         [:body
          [:div {:class "navbar offset1 span12"}
           [:div {:class "navbar-inner"}
