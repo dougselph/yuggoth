@@ -234,9 +234,40 @@
                ["id = ?" (Integer/parseInt assetid)]))
 
 (defn add-cssjs-asset [name path asset_type ins_order]
-  (sql/insert! @db 
-    :cssjs_asset {:name name :path path :asset_type asset_type :ins_order ins_order}))
+  (let [atype_count (:count
+                     (first
+                      (sql/query @db
+                                 ["select count(*) from cssjs_asset where asset_type = ?"
+                                  asset_type])))
+        final_insord (if (nil? ins_order)
+                       (inc atype_count)
+                       ins_order)]
+    (prn (str "atype_count is: " atype_count))
+    (sql/insert!
+     @db :cssjs_asset {:name name :path path :asset_type asset_type :ins_order final_insord})))
 
 (defn delete-cssjs-asset [assetid]
   (let [int_assetid (Integer/parseInt assetid)]
     (sql/delete! @db :cssjs_asset (where {:id int_assetid}))))
+
+(defn change-insorder [assetid direction]
+  (let [asset (first
+               (sql/query
+                @db ["select id, asset_type, ins_order from cssjs_asset where id = ?"
+                     (Integer/parseInt assetid)]))
+        curr_ord (:ins_order asset)
+        new_ord (if (= direction "up")
+                  (dec curr_ord)
+                  (inc curr_ord))
+        displaced_asset (first
+                         (sql/query
+                          @db ["select id, ins_order from cssjs_asset where asset_type = ? and ins_order = ?" (:asset_type asset) new_ord]))
+        displaced_ord (if (= direction "up")
+                        (inc (:ins_order displaced_asset))
+                        (dec (:ins_order displaced_asset)))]
+    (sql/update! @db :cssjs_asset
+                 {:ins_order displaced_ord}
+                 ["id = ?" (:id displaced_asset)])
+    (sql/update! @db :cssjs_asset
+                 {:ins_order new_ord}
+                 ["id = ?" (Integer/parseInt assetid)])))
