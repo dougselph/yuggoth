@@ -226,11 +226,13 @@
   (sql/query @db ["select * from cssjs_asset"]))
 
 (defn cssjs-asset [assetid]
-  (first (sql/query @db ["select * from cssjs_asset where id = ?" assetid])))
+  (first (sql/query @db ["select * from cssjs_asset where id = ?"
+                         (Integer/parseInt (str assetid))])))
 
 (defn update-cssjs-asset [assetid name path asset_type ins_order]
   (sql/update! @db :cssjs_asset
-               {:name name :path path :asset_type asset_type :ins_order ins_order}
+               {:name name :path path :asset_type asset_type
+                :ins_order (Integer/parseInt ins_order)}
                ["id = ?" (Integer/parseInt assetid)]))
 
 (defn add-cssjs-asset [name path asset_type ins_order]
@@ -239,15 +241,28 @@
                       (sql/query @db
                                  ["select count(*) from cssjs_asset where asset_type = ?"
                                   asset_type])))
-        final_insord (if (nil? ins_order)
+        final_insord (if (or (nil? ins_order)
+                             (= ins_order "0"))
                        (inc atype_count)
-                       ins_order)]
+                       (Integer/parseInt ins_order))]
     (prn (str "atype_count is: " atype_count))
     (sql/insert!
      @db :cssjs_asset {:name name :path path :asset_type asset_type :ins_order final_insord})))
 
 (defn delete-cssjs-asset [assetid]
-  (let [int_assetid (Integer/parseInt assetid)]
+  (let [int_assetid (Integer/parseInt assetid)
+        del_asset (first
+                   (sql/query @db ["select ins_order, asset_type from cssjs_asset where id = ?"
+                                   int_assetid]))
+        bump_assets (into []
+                          (sql/query @db
+                                     [(str "select id, name, path, ins_order from cssjs_asset "
+                                           "where asset_type = ? and ins_order > ?")
+                                      (:asset_type del_asset) (:ins_order del_asset)]))]
+    (doseq [bump bump_assets]
+      ;(prn (str "bump is: " bump))
+      (update-cssjs-asset (str (:id bump)) (:name bump) (:path bump)
+                          (:asset_type del_asset) (str (dec (:ins_order bump)))))
     (sql/delete! @db :cssjs_asset (where {:id int_assetid}))))
 
 (defn change-insorder [assetid direction]

@@ -71,46 +71,49 @@
                              [:i {:class "icon-arrow-down"}]])]
                          [:td {:width "40px"}
                           (link-to {:class "btn btn-mini"}
-                                   (str "/admin/asset/edit/" (:id asset))
+                                   (str "/admin/cssjs/edit/" (:id asset))
                                    (s/capitalize (text :edit)))]
                          [:td (asset-delete-form (:id asset))]])]
                      (asset-insertion-order-form) [:row "&nbsp"]])
      )))
 
 (defn admin-edit-asset
-  "cssjs-asset edit form, used for creating and editing cssjs_assets for insertion into page."
-  [assetid assettype error]
-  (let [new? (if (= assetid :new) true false)
-        {:keys [name path asset_type ins_order]} (if new?
-                              {:name "" :path "" :asset_type assettype :ins_order "0"}
-                              (into {} (db/cssjs-asset (Integer/parseInt assetid))))
-        page-title (if new?
-                     (text (keyword (str "new-" assettype "-asset")))
-                     (text (keyword (str "edit-" assettype "-asset"))))]
-    (prn (str "assettype is: " assettype))
-    (layout/admin
-      page-title
-      (when error [:div.error error])
-      [:div {:class "row"}
-       [:div {:class "span12"}
+  ([assetid error] (admin-edit-asset assetid (:asset_type (db/cssjs-asset assetid)) error))
+  ([assetid assettype error]
+     (let [new? (if (= assetid :new) true false)
+           {:keys [name path asset_type ins_order]}
+             (if new?
+               {:name "" :path "" :asset_type assettype :ins_order "0"}
+               (into {} (db/cssjs-asset (Integer/parseInt assetid))))
+           page-title (if new?
+                        (text (keyword (str "new-" assettype "-asset")))
+                        (text (keyword (str "edit-" assettype "-asset"))))]
+       (prn (str "assettype is: " assettype))
+       (prn (str "ins_order is: " ins_order))
+       (layout/admin
+        page-title
+        (when error [:div.error error])
         [:div {:class "row"}
-         [:div {:class "span8"}
-          (form-to {:class "form-horizontal"}
-                   [:post "/admin/asset/save"]
-                   [:div {:class "control-group"}
-                    (label {:class "control-label"} "name" (s/capitalize (text :name)))
-                    [:div {:class "controls"}
-                     (text-field {:tabindex 1 :class "input-xxlarge"} "name" name)]]
-                   [:div {:class "control-group"}
-                    (label {:class "control-label"} "path" (s/capitalize (text :path)))
-                    [:div {:class "controls"}
-                     (text-field {:tabindex 2 :class "input-xxlarge" :rows 5}
-                                "path" path)]]
-                   [:div {:class "control-group" :style "clear:both"}
-                    [:div {:class "controls"}
-                     (submit-button {:class "btn"} (text :submit))]]
-                   (hidden-field "asset_type" asset_type)
-                   (hidden-field "assetid" assetid))]]]])))
+         [:div {:class "span12"}
+          [:div {:class "row"}
+           [:div {:class "span8"}
+            (form-to {:class "form-horizontal"}
+                     [:post "/admin/asset/save"]
+                     [:div {:class "control-group"}
+                      (label {:class "control-label"} "name" (s/capitalize (text :name)))
+                      [:div {:class "controls"}
+                       (text-field {:tabindex 1 :class "input-xxlarge"} "name" name)]]
+                     [:div {:class "control-group"}
+                      (label {:class "control-label"} "path" (s/capitalize (text :path)))
+                      [:div {:class "controls"}
+                       (text-field {:tabindex 2 :class "input-xxlarge" :rows 5}
+                                   "path" path)]]
+                     [:div {:class "control-group" :style "clear:both"}
+                      [:div {:class "controls"}
+                       (submit-button {:class "btn"} (text :submit))]]
+                     (hidden-field "asset_type" asset_type)
+                     (hidden-field "ins_order" ins_order)
+                     (hidden-field "assetid" assetid))]]]]))))
 
 (defn admin-save-asset
   [assetid name path asset_type ins_order]
@@ -129,7 +132,7 @@
 
 (defn admin-delete-asset
   [assetid]
-  (db/delete-tag assetid)
+  (db/delete-cssjs-asset assetid)
   (resp/redirect "/admin/cssjs"))
 
 (defroutes cssjs-routes
