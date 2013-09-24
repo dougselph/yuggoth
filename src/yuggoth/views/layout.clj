@@ -58,7 +58,10 @@
 (defn common [title & content]  
   (let [html-title (if (string? title) title (:title title))
         title-elements (when (map? title) (:elements title))
-        site-title (:title (db/get-admin))]
+        site-title (:title (db/get-admin))
+        cssjs_assets (into [] (db/cssjs-assets))
+        css_assets (sort-by :ins_order (filter #(= (:asset_type %) "css") cssjs_assets))
+        js_assets (sort-by :ins_order (filter #(= (:asset_type %) "js") cssjs_assets))]
     (html5
       [:head
        [:meta {:charset "utf-8"}]
@@ -69,6 +72,8 @@
        [:title site-title]
        (include-css "/bootstrap/css/bootstrap.min.css")
        (include-css "/bootstrap/css/bootstrap-responsive.min.css")
+       (for [css css_assets]
+         (include-css (:path css)))
        (include-js "/js/jquery.min.js")
        (include-js  "/bootstrap/js/bootstrap.js")]
       [:body              
@@ -109,7 +114,9 @@
        ;;workaround for hiccup not handling URLs without protocol correctly
        [:script {:type "text/javascript", :src "//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"}]
        (include-js "/js/jquery.alerts.js"
-                   "/js/site.js")])))
+                   "/js/site.js")
+       (for [js js_assets]
+         (include-js (:path js)))])))
 
 (defn admin
   ([title content] (admin title nil content))
