@@ -1,4 +1,5 @@
-$(document).ready(function(){	    
+$(document).ready(function(){
+    $(".insordlink").click(insordChange);
 	SyntaxHighlighter.config.tagName = "code";
 	SyntaxHighlighter.defaults.gutter = false;   
 	SyntaxHighlighter.all();
@@ -12,7 +13,7 @@ $(document).ready(function(){
   	$(".submit-comment").keypress(onEnter);
   	$(".submit-comment").click(submitComment);  	
   	$(".tagoff").click(toggleTag);
-  	$(".tagon").click(toggleTag);  	
+  	$(".tagon").click(toggleTag);
   	$(".submit").click(function(){$(this).parents("FORM").submit();});  	
     $(".delete").click(function(e){
     	confirm(this.parentNode);
@@ -21,6 +22,14 @@ $(document).ready(function(){
   	});
  	
 });
+ 
+function insordChange() {
+    var assetId = $(this).data('assetid');
+    var direction = $(this).data('direction');
+    $("input#hid_assetid").val(assetId);
+    $("input#hid_direction").val(direction);
+    $("form#insord_form").submit();
+}
 
 function confirm(form) {	
 	jConfirm('', 
