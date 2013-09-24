@@ -110,10 +110,12 @@
 
 
 (defn store-post [title tease content time public page slug]
-  (let [author (:handle (get-admin))]
+  (let [author (:handle (get-admin))
+        timeval (->> time (timef/parse (timef/formatter "yyyy-MM-dd"))
+                     timec/to-timestamp)]
     (first (sql/insert! @db
                         :blog
-                        {:time (or time (new Timestamp (.getTime (new Date))))
+                        {:time (or timeval (new Timestamp (.getTime (new Date))))
                          :title title
                          :tease tease
                          :content content
