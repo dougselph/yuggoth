@@ -25,6 +25,11 @@
            (submit-button {:class "btn btn-mini"} (s/capitalize (text :delete))))
   )
 
+(defn- asset-insertion-order-form []
+  (form-to {:id "insord_form"} [:post "/admin/cssjs/insord_chg"]
+           (hidden-field {:id "hid_assetid"} "assetid" "0")
+           (hidden-field {:id "hid_direction"} "direction" "")))
+
 (defn admin-list-assets
   "Tagslisting in table with links to delete, edit"
   []
@@ -32,9 +37,6 @@
         asset_map {:css (vec (sort-by :ins_order (filter #(= (:asset_type %) "css") assets)))
                    :js (vec (sort-by :ins_order (filter #(= (:asset_type %) "js") assets)))}
         atypes [:css :js]]
-    (prn (str "asset_map is: " asset_map))
-    (prn (str "atypes is: " atypes))
-    (prn (str "assets from db query: " assets))
     (layout/admin (text :asset-header)
                   (for [atype atypes]
                     [:span
@@ -56,13 +58,23 @@
                          [:td (:id asset)]
                          [:td (:name asset)]
                          [:td (:path asset)]
-                         [:td (:ins_order asset)]
+                         [:td #_(:ins_order asset)
+                          (if-not (= (:ins_order asset) 1)
+                            [:a {:class "insordlink btn btn-mini"
+                                 :data-assetid (str (:id asset))
+                                 :data-direction "up"}
+                             [:i {:class "icon-arrow-up"}]])
+                          (if-not (>= (:ins_order asset) (count (atype asset_map)))
+                            [:a {:class "insordlink btn btn-mini"
+                                 :data-assetid (str (:id asset))
+                                 :data-direction "down"}
+                             [:i {:class "icon-arrow-down"}]])]
                          [:td {:width "40px"}
                           (link-to {:class "btn btn-mini"}
                                    (str "/admin/asset/edit/" (:id asset))
                                    (s/capitalize (text :edit)))]
                          [:td (asset-delete-form (:id asset))]])]
-                     [:row "&nbsp"]])
+                     (asset-insertion-order-form) [:row "&nbsp"]])
      )))
 
 (defn admin-edit-asset
@@ -110,6 +122,11 @@
     (db/update-cssjs-asset assetid name path asset_type ins_order))
   (resp/redirect "/admin/cssjs"))
 
+(defn admin-chg-asset-order
+  [assetid direction]
+  (db/change-insorder assetid direction)
+  (resp/redirect "/admin/cssjs"))
+
 (defn admin-delete-asset
   [assetid]
   (db/delete-tag assetid)
@@ -122,4 +139,6 @@
   (GET "/admin/cssjs/edit/:assetid" [assetid] (restricted (admin-edit-asset assetid false)))
   (POST "/admin/asset/save" [assetid name path asset_type ins_order]
         (restricted (admin-save-asset assetid name path asset_type ins_order)))
+  (POST "/admin/cssjs/insord_chg" [assetid direction]
+        (restricted (admin-chg-asset-order assetid direction)))
   (POST "/admin/cssjs/delete" [assetid] (restricted (admin-delete-asset assetid))))
