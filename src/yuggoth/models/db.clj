@@ -54,7 +54,7 @@
 ;;blog posts
 (defn update-post [id title tease content pubtime public page slug]
   (let [int-id (Integer/parseInt id)
-        timeval (->> pubtime (timef/parse (timef/formatter "yyyy-MM-dd"))
+        timeval (->> pubtime (timef/parse (timef/formatter "yyyy/MM/dd"))
                      timec/to-timestamp)]
     (sql/update! @db
       :blog
@@ -111,7 +111,7 @@
 
 (defn store-post [title tease content time public page slug]
   (let [author (:handle (get-admin))
-        timeval (->> time (timef/parse (timef/formatter "yyyy-MM-dd"))
+        timeval (->> time (timef/parse (timef/formatter "yyyy/MM/dd"))
                      timec/to-timestamp)]
     (first (sql/insert! @db
                         :blog
